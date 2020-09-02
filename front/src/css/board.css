@@ -1,0 +1,9 @@
+.line {
+    display: flex;
+}
+
+.board {
+    width: 20vw;
+    height: 50vh;
+    margin-top: 10vw;
+}

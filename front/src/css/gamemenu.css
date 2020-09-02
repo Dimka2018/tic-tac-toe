@@ -1,0 +1,22 @@
+.game_menu {
+    width: 100vw;
+    height: 12vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+}
+
+.leave_button {
+    background: black;
+    width: 40%;
+    height: 40%;
+    border: none;
+    color: white;
+    font-size: 2vw;
+    font-weight: bold;
+    outline: none;
+}

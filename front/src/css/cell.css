@@ -1,0 +1,18 @@
+.active:hover {
+    cursor: pointer;
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: black solid 0.1vw;
+}
+
+.symbol {
+    font-weight: bold;
+    font-size: 3vw;
+    text-align: center;
+    color: black;
+    width: 100%;
+    height: 100%;
+}

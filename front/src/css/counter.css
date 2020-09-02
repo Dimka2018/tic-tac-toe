@@ -1,0 +1,27 @@
+.score {
+    background: black;
+    color: white;
+    font-size: 6vw;
+    font-weight: bold;
+    width: 30%;
+    height: 100%;
+    text-align: center;
+}
+
+.separator {
+    background: white;
+    color: black;
+    font-size: 6vw;
+    font-weight: bold;
+    width: 20%;
+    height: 100%;
+    text-align: center;
+}
+
+.score_container {
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
