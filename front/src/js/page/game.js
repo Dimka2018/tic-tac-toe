@@ -1,5 +1,5 @@
 import React from "react";
-import Board from "../directive/Board";
+import Board from "../directive/board";
 import GameMenu from "../directive/game_menu";
 import '../../css/game.css';
 

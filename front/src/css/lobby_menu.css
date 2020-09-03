@@ -1,0 +1,20 @@
+.lobby-menu-container {
+    width: 100vw;
+    height: 8vw;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 3vw;
+}
+
+.create-lobby-button {
+    background: black;
+    border: none;
+    outline: none;
+    width: 12vw;
+    height: 5vw;
+    color: white;
+    font-size: 2vw;
+    font-weight: bold;
+    border-radius: 1vw;
+}

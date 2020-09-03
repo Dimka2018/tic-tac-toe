@@ -1,0 +1,40 @@
+.search-table {
+    position: relative;
+    height: 35vw;
+    overflow: auto;
+}
+
+.search-table tbody tr:hover {
+    cursor: pointer;
+    background: black;
+    color: white;
+}
+
+.table-wrapper-scroll-y {
+    display: block;
+    border: 0.5vw solid black;
+    border-radius: 1vw;
+}
+
+.search-table-content, .search-table-content th, .search-table-content td {
+    border: 1px solid black;
+    text-align: center;
+}
+
+.table thead th {
+    border-bottom: 1px solid black;
+}
+
+.search-table::-webkit-scrollbar-track {
+    background: black;
+}
+
+.search-table::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 0.5vw;
+    width: 0.5vw;
+}
+
+.search-table::-webkit-scrollbar {
+    width: 1vw;
+}

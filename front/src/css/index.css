@@ -1,3 +1,7 @@
 :root {
   --cell-size: 5vw;
 }
+
+body {
+  overflow: hidden;
+}

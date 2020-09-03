@@ -1,0 +1,59 @@
+.background {
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 3vw;
+}
+
+.title {
+    font-size: 3vw;
+    color: white;
+}
+
+.modal-container {
+    background: black;
+    width: 50vw;
+    height: 30vw;
+    border-radius: 1vw;
+    margin-top: 10vw;
+}
+
+.game-input {
+    width: 20vw;
+    height: 4vw;
+    border-radius: 1vw;
+    text-align: center;
+    font-size: 2vw;
+    font-weight: bold;
+    border: none;
+    outline: none;
+}
+
+.mt-5vw {
+    margin-top: 5vw;
+}
+
+.mt-2vw {
+    margin-top: 2vw;
+}
+
+.mt-7vw {
+    margin-top: 7vw;
+}
+
+.modal-button {
+    width: 12vw;
+    height: 5vw;
+    background: white;
+    border-radius: 1vw;
+    color: black;
+    font-weight: bold;
+    font-size: 2vw;
+    outline: none;
+    border: none;
+}
