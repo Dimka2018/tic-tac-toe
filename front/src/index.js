@@ -4,8 +4,26 @@ import './css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Game from "./js/page/game";
 import Search from "./js/page/search";
+import Lobby from "./js/page/lobby";
+import Controller from "./js/controller/Controller";
+import {Route} from 'react-router-dom';
+import {BrowserRouter as Router} from "react-router-dom";
 
-ReactDOM.render(
-    <Search/>,
-  document.getElementById('root')
+const controller = new Controller();
+const routing = (
+    <Router>
+        <div>
+            <Route path="/" component={props =>
+                <Search controller={controller} />
+            }/>
+            <Route path='/lobby' component={props =>
+                <Lobby controller={controller}/>
+            }/>
+            <Route path='/game' component={props =>
+                <Game controller={controller}/>
+            }/>
+        </div>
+    </Router>
 );
+
+ReactDOM.render(routing, document.getElementById('root'));

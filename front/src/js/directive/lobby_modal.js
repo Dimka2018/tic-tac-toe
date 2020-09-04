@@ -13,7 +13,7 @@ class LobbyModal extends React.Component {
             <div className="background">
                 <div className="modal-container">
                     <div className="row mt-2vw flex justify-content-center align-items-center">
-                        <span className="title font-weight-bold">Enter number of games</span>
+                        <span className="lobby-title font-weight-bold">Enter number of games</span>
                     </div>
                     <div className="row flex mt-5vw justify-content-center align-items-center">
                         <input className="game-input" />
