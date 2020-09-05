@@ -1,6 +1,7 @@
 package com.dimka.tictactoe.handler;
 
-import com.dimka.tictactoe.domain.Message;
+import com.dimka.tictactoe.dto.MessageRequest;
+import com.dimka.tictactoe.dto.MessageResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +31,10 @@ public class FrontHandler extends BinaryWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         log.info(message.getPayload());
         try {
-            Message msg = mapper.readValue(message.getPayload(), Message.class);
+            MessageRequest msg = mapper.readValue(message.getPayload(), MessageRequest.class);
             handlers.get(msg.getType()).dispatch(message, session);
         } catch (Exception e) {
-            log.error("can't dispatch message " + message.getPayload());
+            log.error("can't dispatch message " + message.getPayload(), e);
         }
     }
 

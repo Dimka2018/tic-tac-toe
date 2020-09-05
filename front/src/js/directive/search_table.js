@@ -6,59 +6,16 @@ class SearchTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            lobbies: [{id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3},
-                {id: 1, host: "Dimka", games: 3}
-            ]
+            lobbies: []
         }
     }
 
     handleClick(event) {
         console.log(event)
+    }
+
+    setLobbies(lobbies) {
+        this.setState({lobbies: lobbies})
     }
 
     render() {

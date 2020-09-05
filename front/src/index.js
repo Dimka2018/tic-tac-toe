@@ -13,7 +13,7 @@ const controller = new Controller();
 const routing = (
     <Router>
         <div>
-            <Route path="/" component={props =>
+            <Route exact path="/" component={props =>
                 <Search controller={controller} />
             }/>
             <Route path='/lobby' component={props =>
@@ -26,4 +26,6 @@ const routing = (
     </Router>
 );
 
-ReactDOM.render(routing, document.getElementById('root'));
+controller.onConnected(() => {
+    ReactDOM.render(routing, document.getElementById('root'));
+});
