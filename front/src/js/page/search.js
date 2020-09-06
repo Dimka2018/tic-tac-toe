@@ -19,10 +19,14 @@ class Search extends React.Component {
 
     componentDidMount() {
         this.controller.subscribe('LOBBY_LIST_CHANGED', message => {
-            this.searchTable.setLobbies(message.lobbies);
+            this.refs.searchTable.setLobbies(message.lobbies);
         });
 
         this.controller.subscribe('LOBBY_CREATED', message => {
+            this.controller.goLobby();
+        });
+
+        this.controller.subscribe('JOINED_TO_LOBBY', message => {
             this.controller.goLobby();
         });
 
@@ -33,13 +37,16 @@ class Search extends React.Component {
         this.controller.createLobby(numberGames)
     }
 
+    joinLobby(id) {
+        this.controller.joinLobby(id);
+    }
+
     render() {
         const modalMode = this.state.modalMode;
-        this.searchTable = <SearchTable/>;
         return (
             <div className="container-fluid">
                 <LobbyMenu lobbyButtonCallback={this.toggleModal.bind(this)} />
-                {this.searchTable}
+                <SearchTable ref="searchTable" onRowClick={this.joinLobby.bind(this)}/>
                 {modalMode && <LobbyModal onOk={this.createLobby.bind(this)} onCancel={this.toggleModal.bind(this)}/>}
             </div>
         );

@@ -7,11 +7,13 @@ import Search from "./js/page/search";
 import Lobby from "./js/page/lobby";
 import Controller from "./js/controller/Controller";
 import {Route} from 'react-router-dom';
-import {BrowserRouter as Router} from "react-router-dom";
+import {Router} from "react-router-dom";
+import history from "./js/utils/history";
 
-const controller = new Controller();
+let hist = history;
+const controller = new Controller(hist);
 const routing = (
-    <Router>
+    <Router history={hist}>
         <div>
             <Route exact path="/" component={props =>
                 <Search controller={controller} />

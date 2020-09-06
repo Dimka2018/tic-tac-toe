@@ -5,22 +5,21 @@ class Lobby extends React.Component {
 
     constructor(props) {
         super(props);
+        this.controller = this.props.controller;
         this.state = {
             host: props.host,
-            users: [
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'},
-                {id: 1, name: 'Dimka'}
-            ]
+            users: []
         }
+    }
+
+    componentDidMount() {
+        this.controller.subscribe('LOBBY_MEMBERS_LIST_CHANGED', message => {
+            this.setMembers({users: message.members})
+        });
+    }
+
+    setMembers(members) {
+        this.setState({users: members})
     }
 
     render() {

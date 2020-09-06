@@ -5,14 +5,12 @@ class SearchTable extends React.Component {
 
     constructor(props) {
         super(props);
+        this.onRowClick = props.onRowClick;
         this.state = {
             lobbies: []
         }
     }
 
-    handleClick(event) {
-        console.log(event)
-    }
 
     setLobbies(lobbies) {
         this.setState({lobbies: lobbies})
@@ -20,7 +18,7 @@ class SearchTable extends React.Component {
 
     render() {
         const rows = this.state.lobbies.map((lobby, index) =>
-            <tr key={index} onClick={this.handleClick}>
+            <tr key={lobby.id} onClick={() => this.onRowClick(lobby.id)}>
                 <td>{index + 1}</td>
                 <td>{lobby.id}</td>
                 <td>{lobby.host}</td>

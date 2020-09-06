@@ -1,3 +1,5 @@
+import history from "../utils/history";
+
 class Controller {
 
     constructor() {
@@ -20,9 +22,13 @@ class Controller {
             console.log(event.data);
             let message = JSON.parse(event.data);
             this.consumers.filter(consumer => consumer.type === message.type)
-                .forEach(consumer => {try {consumer.callback(message)} catch (e) {
-
-            }});
+                .forEach(consumer => {
+                    try {
+                        consumer.callback(message)
+                    } catch (e) {
+                        console.log(e);
+                    }
+                });
         }
     }
 
@@ -39,8 +45,8 @@ class Controller {
         this.socket.send(JSON.stringify({type: 'requestLobbies'}));
     }
 
-    joinLobby(lobby) {
-        this.socket.send(JSON.stringify({type: 'joinLobby', lobby: lobby}))
+    joinLobby(lobbyId) {
+        this.socket.send(JSON.stringify({type: 'joinLobby', lobbyId: lobbyId}))
     }
 
     createLobby(numberGames) {
@@ -60,7 +66,7 @@ class Controller {
     }
 
     goLobby() {
-        window.location.href = '/lobby';
+        history.push('/lobby');
     }
 }
 
