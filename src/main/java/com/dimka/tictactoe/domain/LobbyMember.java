@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class LobbyMember {
 
+    private String id;
     private String name;
 }

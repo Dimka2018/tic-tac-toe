@@ -53,20 +53,32 @@ class Controller {
         this.socket.send(JSON.stringify({type: 'createLobby', games: numberGames}));
     }
 
-    leaveLobby(lobby) {
-        this.socket.send(JSON.stringify({type: 'leaveLobby', lobby: lobby}))
+    leaveLobby() {
+        this.socket.send(JSON.stringify({type: 'leaveLobby'}))
     }
 
-    startGame() {
+    kik(userId) {
+        this.socket.send(JSON.stringify({type: 'kik', id: userId}))
+    }
 
+    startGame(lobbyId) {
+        this.socket.send(JSON.stringify({type: 'startGame', lobbyId: lobbyId}))
     }
 
     leaveGame() {
 
     }
 
-    goLobby() {
-        history.push('/lobby');
+    goLobby(host = false, id) {
+        history.push(`/lobby?host=${host}&id=${id}`);
+    }
+
+    goLobbySearch() {
+        history.push("/")
+    }
+
+    goGame() {
+        history.push("/game");
     }
 }
 

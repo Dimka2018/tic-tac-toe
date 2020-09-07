@@ -1,6 +1,6 @@
 package com.dimka.tictactoe.dto;
 
-import com.dimka.tictactoe.handler.Event;
+import com.dimka.tictactoe.event.Event;
 import lombok.Data;
 
 @Data

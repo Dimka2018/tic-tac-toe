@@ -28,7 +28,7 @@ public class RequestLobbyMembersHandler implements Handler {
     public void dispatch(TextMessage message, WebSocketSession session) throws Exception {
         Lobby lobby = (Lobby) sessionStorage.getSessions().get(session.getId()).get("lobby");
         Map<String, Map<String, Object>> lobbyMembers = sessionStorage.getLobbyMembers(lobby.getId());
-        List<LobbyMember> members = lobbyMembers.keySet().stream().map(LobbyMember::new).collect(Collectors.toList());
+        List<LobbyMember> members = lobbyMembers.keySet().stream().map(key -> new LobbyMember(key, key)).collect(Collectors.toList());
         LobbyMembersResponse response = new LobbyMembersResponse();
         response.setMembers(members);
 

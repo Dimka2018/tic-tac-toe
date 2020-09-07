@@ -2,6 +2,7 @@ package com.dimka.tictactoe.handler;
 
 import com.dimka.tictactoe.domain.Lobby;
 import com.dimka.tictactoe.dto.LobbyListResponse;
+import com.dimka.tictactoe.event.Event;
 import com.dimka.tictactoe.repository.WebSocketSessionStorage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;

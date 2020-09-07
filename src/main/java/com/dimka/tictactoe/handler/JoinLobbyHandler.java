@@ -5,6 +5,7 @@ import com.dimka.tictactoe.domain.LobbyMember;
 import com.dimka.tictactoe.dto.JoinLobbyRequest;
 import com.dimka.tictactoe.dto.JoinLobbyResponse;
 import com.dimka.tictactoe.dto.LobbyMembersResponse;
+import com.dimka.tictactoe.event.Event;
 import com.dimka.tictactoe.repository.WebSocketSessionStorage;
 import com.dimka.tictactoe.state.UserState;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +44,7 @@ public class JoinLobbyHandler implements Handler {
         List<LobbyMember> members = sessionStorage.getLobbyMembers(lobby.getId())
                 .keySet()
                 .stream()
-                .map(LobbyMember::new)
+                .map(key -> new LobbyMember(key, key))
                 .collect(Collectors.toList());
         membersResponse.setMembers(members);
         membersResponse.setType(Event.LOBBY_MEMBERS_LIST_CHANGED);

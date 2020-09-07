@@ -89,3 +89,10 @@
 .user-container::-webkit-scrollbar {
     width: 1vw;
 }
+
+.user-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 12vw !important;
+}

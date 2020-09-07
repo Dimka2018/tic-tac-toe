@@ -23,11 +23,11 @@ class Search extends React.Component {
         });
 
         this.controller.subscribe('LOBBY_CREATED', message => {
-            this.controller.goLobby();
+            this.controller.goLobby(true, message.id);
         });
 
         this.controller.subscribe('JOINED_TO_LOBBY', message => {
-            this.controller.goLobby();
+            this.controller.goLobby(false, message.lobbyId);
         });
 
         this.controller.requestLobbies();
