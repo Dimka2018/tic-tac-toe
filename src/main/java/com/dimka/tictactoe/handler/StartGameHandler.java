@@ -27,7 +27,14 @@ public class StartGameHandler implements Handler {
             Game game = new Game();
             game.setHost(session.getId());
             game.setId(session.getId());
+            game.setTurn(session.getId());
+            game.setTotalGames(lobby.getGames());
+            game.setCurrentGameNum(1);
             emitter.emmitGameStartedEvent(lobby.getId(), game);
+
+            WebSocketSession enemy = emitter.getEnemy(game.getId(), session.getId());
+            emitter.emmitEnemyTurnEvent(enemy);
+            emitter.emmitMyTurnEvent(session);
         }
     }
 }

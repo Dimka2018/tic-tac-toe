@@ -69,6 +69,10 @@ class Controller {
 
     }
 
+    applyGameState(board) {
+        this.socket.send(JSON.stringify({type: 'applyBoardState', cells: board}))
+    }
+
     goLobby(host = false, id) {
         history.push(`/lobby?host=${host}&id=${id}`);
     }

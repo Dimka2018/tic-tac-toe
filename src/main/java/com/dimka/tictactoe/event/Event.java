@@ -9,6 +9,9 @@ public enum Event {
     LEAVE_LOBBY,
     LOBBY_DESTROYED,
     KICK,
-    GAME_STARTED
+    GAME_STARTED,
+    BOARD_CHANGED,
+    YOUR_TURN_STARTED,
+    ENEMY_TURN_STARTED
 
 }

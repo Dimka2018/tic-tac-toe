@@ -7,5 +7,5 @@ public class Lobby {
 
     private String id;
     private String host;
-    private Integer games;
+    private int games;
 }

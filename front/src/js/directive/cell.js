@@ -5,6 +5,7 @@ class Cell extends React.Component {
 
     constructor(props) {
         super(props);
+        this.onActivate = props.onActivate;
         this.state = {
             active: true
         }
@@ -13,7 +14,29 @@ class Cell extends React.Component {
     handleClick() {
         if (this.state.active) {
             this.setState({active: false, icon: "x"});
+            this.onActivate(this.props.row, this.props.col);
         }
+    }
+
+    setActiveState(num) {
+        let icon;
+        if (num === 1) {
+            icon = 'x';
+            this.setState({active: false, icon: icon})
+        } else if (num === 2) {
+            icon = 'o';
+            this.setState({active: false, icon: icon})
+        }
+    }
+
+    setActive() {
+        if (!this.state.icon) {
+            this.setState({active: true})
+        }
+    }
+
+    setInactive() {
+        this.setState({active: false})
     }
 
     render() {

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -36,18 +37,12 @@ public class EventEmitter {
                 .collect(Collectors.toList());
         membersResponse.setMembers(members);
         membersResponse.setType(Event.LOBBY_MEMBERS_LIST_CHANGED);
-        TextMessage textMessage = new TextMessage(mapper.writeValueAsBytes(membersResponse));
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(membersResponse));
         sessionStorage.getLobbyMembers(lobbyId)
                 .values()
                 .stream()
                 .map(user -> (WebSocketSession) user.get("session"))
-                .forEach(s -> {
-                    try {
-                        s.sendMessage(textMessage);
-                    } catch (IOException e) {
-                        log.warn("can't send message", e);
-                    }
-                });
+                .forEach(s -> sendMessage(message, s));
     }
 
     public void emmitLobbyLeaveEvent(WebSocketSession session) throws Exception {
@@ -70,33 +65,21 @@ public class EventEmitter {
                 .peek(id -> sessionStorage.getSessions().get(id).remove("lobby"))
         .peek(id -> sessionStorage.getSessions().get(id).put("state", UserState.SEARCH_LOBBY))
         .map(id -> (WebSocketSession) sessionStorage.getSessions().get(id).get("session"))
-        .forEach(session -> {
-            try {
-                session.sendMessage(message);
-            } catch (IOException e) {
-                log.warn("can't send message", e);
-            }
-        });
+        .forEach(session -> sendMessage(message, session));
     }
 
     public void emmitLobbyListChanged(WebSocketSession session) throws Exception {
         LobbyListResponse lobbyListResponse = new LobbyListResponse();
         lobbyListResponse.setType(Event.LOBBY_LIST_CHANGED);
         lobbyListResponse.setLobbies(sessionStorage.getLobbyList());
-        TextMessage textMessage = new TextMessage(mapper.writeValueAsBytes(lobbyListResponse));
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(lobbyListResponse));
         sessionStorage.getSessions()
                 .values()
                 .stream()
                 .filter(user -> ((WebSocketSession)user.get("session")).isOpen())
                 .filter(user -> !session.getId().equals(((WebSocketSession)user.get("session")).getId()))
                 .map(user -> (WebSocketSession)user.get("session"))
-                .forEach(s -> {
-                    try {
-                        s.sendMessage(textMessage);
-                    } catch (IOException e) {
-                        log.warn("cant send message", e);
-                    }
-                });
+                .forEach(s -> sendMessage(message, s));
     }
 
     public void emmitKikEvent(String userId) throws Exception {
@@ -118,13 +101,54 @@ public class EventEmitter {
                 .peek(user -> user.put("state", UserState.IN_GAME))
                 .peek(user -> user.put("game", game))
                 .map(user -> (WebSocketSession) user.get("session"))
-                .forEach(session -> {
-                    try {
-                        session.sendMessage(message);
-                    } catch (IOException e) {
-                        log.warn("can't send message");
-                    }
-                });
+                .forEach(session -> sendMessage(message, session));
 
+    }
+
+    public void emmitBoardStateChangedEvent(int[][] cells, WebSocketSession session) throws Exception {
+        ApplyBoardStateResponse response = new ApplyBoardStateResponse();
+        response.setCells(cells);
+        response.setType(Event.BOARD_CHANGED);
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(response));
+        Game game = (Game) sessionStorage.getSessions().get(session.getId()).get("game");
+        sessionStorage.getSessions()
+                .entrySet()
+                .stream()
+                .filter(entry -> !session.getId().equals(entry.getKey()))
+                .filter(entry -> entry.getValue().containsKey("game"))
+                .filter(entry -> game.getId().equals(((Game) entry.getValue().get("game")).getId()))
+                .map(entry -> (WebSocketSession) entry.getValue().get("session"))
+                .forEach(s -> sendMessage(message, s));
+    }
+
+    public void emmitEnemyTurnEvent(WebSocketSession session) throws Exception {
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(new MessageResponse(Event.ENEMY_TURN_STARTED)));
+        sendMessage(message, session);
+    }
+
+    public void emmitMyTurnEvent(WebSocketSession session) throws Exception {
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(new MessageResponse(Event.YOUR_TURN_STARTED)));
+        sendMessage(message, session);
+    }
+
+    public WebSocketSession getEnemy(String gameId, String userId) {
+        return sessionStorage.getSessions()
+                .entrySet()
+                .stream()
+                .filter(entry -> !entry.getKey().equals(userId))
+                .map(Map.Entry::getValue)
+                .filter(user -> user.containsKey("game"))
+                .filter(user -> gameId.equals(((Game) user.get("game")).getId()))
+                .map(user -> (WebSocketSession) user.get("session"))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private void sendMessage(AbstractWebSocketMessage message, WebSocketSession session) {
+        try {
+            session.sendMessage(message);
+        } catch (IOException e) {
+            log.warn("can't send message", e);
+        }
     }
 }

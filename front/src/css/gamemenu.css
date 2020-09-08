@@ -4,10 +4,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-left: 1vw;
-    padding-right: 1vw;
-    padding-top: 1vw;
-    padding-bottom: 1vw;
+    padding: 1vw;
 }
 
 .leave_button {
@@ -19,4 +16,9 @@
     font-size: 2vw;
     font-weight: bold;
     outline: none;
+}
+
+.game-turn {
+    font-size: 4vw;
+    font-weight: bold;
 }
