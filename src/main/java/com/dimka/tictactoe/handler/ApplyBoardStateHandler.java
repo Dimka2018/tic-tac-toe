@@ -11,6 +11,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @AllArgsConstructor
 @Component("applyBoardState")
@@ -35,13 +36,34 @@ public class ApplyBoardStateHandler implements Handler {
             int[][] cells = request.getCells();
 
             WebSocketSession enemy = emitter.getEnemy(game.getId(), session.getId());
-            if (isWinner(cells)) {
-                emitter.emmitBoardStateChangedEvent(WHITE_BOARD, session);
-                emitter.emmitBoardStateChangedEvent(WHITE_BOARD, enemy);
-            } else if (isDraw(cells)) {
+            if (isWinner(cells) || isDraw(cells)) {
+                if (game.getCurrentGameNum() < game.getTotalGames()) {
+                    emitter.emmitGamesChangedEvent(game.getCurrentGameNum(), game.getTotalGames(), session, enemy);
+                    Map<String, Integer> score = game.getScore();
+                    int enemyScore = score.get(enemy.getId());
+                    int myScore = score.get(session.getId()) + 1;
+                    score.put(session.getId(), myScore);
+                    emitter.emmitScoreChangedEvent(myScore, enemyScore, session);
+                    emitter.emmitScoreChangedEvent(enemyScore, myScore, enemy);
+                    emitter.emmitBoardStateChangedEvent(WHITE_BOARD, session);
+                    emitter.emmitBoardStateChangedEvent(WHITE_BOARD, enemy);
+                } else {
+                    sessionStorage.getSessions().get(session.getId()).remove("game");
+                    sessionStorage.getSessions().get(enemy.getId()).remove("game");
+                    int myScore = game.getScore().get(session.getId());
+                    int enemyScore = game.getScore().get(enemy.getId());
+
+                    if (myScore > enemyScore) {
+                        emitter.emmitYouWinEvent(session);
+                        emitter.emmitYouLoseEvent(enemy);
+                    } else if (myScore == enemyScore) {
+                        emitter.emmitDrawEvent(session, enemy);
+                    } else {
+                        emitter.emmitYouWinEvent(enemy);
+                        emitter.emmitYouLoseEvent(session);
+                    }
+                }
                 game.setCurrentGameNum(game.getCurrentGameNum() + 1);
-                emitter.emmitBoardStateChangedEvent(WHITE_BOARD, session);
-                emitter.emmitBoardStateChangedEvent(WHITE_BOARD, enemy);
             } else {
                 int[][] invertedBoard = getInvertedBoard(cells);
                 emitter.emmitBoardStateChangedEvent(invertedBoard, session);

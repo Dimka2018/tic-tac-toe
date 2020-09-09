@@ -26,6 +26,8 @@ class Cell extends React.Component {
         } else if (num === 2) {
             icon = 'o';
             this.setState({active: false, icon: icon})
+        } else {
+            this.setState({active: true, icon: ''})
         }
     }
 

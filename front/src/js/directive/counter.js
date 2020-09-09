@@ -8,6 +8,10 @@ class Counter extends React.Component {
         this.state = {myScore: 0, enemyScore: 0}
     }
 
+    setCount(myScore, enemyScore) {
+        this.setState({myScore: myScore, enemyScore: enemyScore});
+    }
+
     render() {
         const {myScore, enemyScore} = this.state;
         return (

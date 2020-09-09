@@ -30,9 +30,13 @@ public class StartGameHandler implements Handler {
             game.setTurn(session.getId());
             game.setTotalGames(lobby.getGames());
             game.setCurrentGameNum(1);
+            game.getScore().put(session.getId(), 0);
+            WebSocketSession enemy = emitter.getLobbyEnemy(session.getId(), session.getId());
+            game.getScore().put(enemy.getId(), 0);
             emitter.emmitGameStartedEvent(lobby.getId(), game);
 
-            WebSocketSession enemy = emitter.getEnemy(game.getId(), session.getId());
+            emitter.emmitGamesChangedEvent(game.getCurrentGameNum(), game.getCurrentGameNum());
+
             emitter.emmitEnemyTurnEvent(enemy);
             emitter.emmitMyTurnEvent(session);
         }

@@ -16,6 +16,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -142,6 +143,55 @@ public class EventEmitter {
                 .map(user -> (WebSocketSession) user.get("session"))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    public WebSocketSession getLobbyEnemy(String lobbyId, String userId) {
+        return sessionStorage.getSessions()
+                .entrySet()
+                .stream()
+                .filter(entry -> !entry.getKey().equals(userId))
+                .map(Map.Entry::getValue)
+                .filter(user -> user.containsKey("lobby"))
+                .filter(user -> lobbyId.equals(((Lobby) user.get("lobby")).getId()))
+                .map(user -> (WebSocketSession) user.get("session"))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    public void emmitGamesChangedEvent(int currentGame, int totalGames, WebSocketSession... sessions) throws Exception {
+        GameChangedResponse response = new GameChangedResponse();
+        response.setType(Event.GAME_CHANGED);
+        response.setCurrentGame(currentGame);
+        response.setTotalGames(totalGames);
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(response));
+        Arrays.stream(sessions).forEach(session -> sendMessage(message, session));
+    }
+
+    public void emmitScoreChangedEvent(int you, int enemy, WebSocketSession session) throws Exception {
+        ScoreResponse response = new ScoreResponse();
+        response.setType(Event.SCORE_CHANGED);
+        response.setYou(you);
+        response.setEnemy(enemy);
+        sendMessage(new TextMessage(mapper.writeValueAsBytes(response)), session);
+    }
+
+    public void emmitYouWinEvent(WebSocketSession session) throws Exception {
+        MessageResponse response = new MessageResponse();
+        response.setType(Event.YOU_WIN);
+        sendMessage(new TextMessage(mapper.writeValueAsBytes(response)), session);
+    }
+
+    public void emmitYouLoseEvent(WebSocketSession session) throws Exception {
+        MessageResponse response = new MessageResponse();
+        response.setType(Event.YOU_LOSE);
+        sendMessage(new TextMessage(mapper.writeValueAsBytes(response)), session);
+    }
+
+    public void emmitDrawEvent(WebSocketSession... sessions) throws Exception {
+        MessageResponse response = new MessageResponse();
+        response.setType(Event.DRAW);
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(response));
+        Arrays.stream(sessions).forEach(session -> sendMessage(message, session));
     }
 
     private void sendMessage(AbstractWebSocketMessage message, WebSocketSession session) {

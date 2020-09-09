@@ -22,6 +22,21 @@ class Game extends React.Component{
             this.refs.menu.setEnemyTurn();
             this.refs.board.block();
         });
+        this.controller.subscribe('GAME_CHANGED', message => {
+            this.refs.menu.setGames(message);
+        });
+        this.controller.subscribe('SCORE_CHANGED', message => {
+            this.refs.menu.setScore(message);
+        });
+        this.controller.subscribe('YOU_WIN', message => {
+            this.controller.goLobbySearch();
+        });
+        this.controller.subscribe('YOU_LOSE', message => {
+            this.controller.goLobbySearch();
+        });
+        this.controller.subscribe('DRAW', message => {
+            this.controller.goLobbySearch();
+        });
     }
 
     applyGameState(board) {
