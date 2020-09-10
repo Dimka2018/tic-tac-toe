@@ -36,8 +36,12 @@ class Controller {
         this.connectedCallbacks.push(callback);
     }
 
-    subscribe(messageType, callback) {
-        this.consumers.push({type: messageType, callback: callback})
+    subscribe(source, messageType, callback) {
+        this.consumers.push({type: messageType, callback: callback, source: source})
+    }
+
+    unsubscribeAll(source) {
+        this.consumers = this.consumers.filter(consumer => consumer.source === source);
     }
 
 

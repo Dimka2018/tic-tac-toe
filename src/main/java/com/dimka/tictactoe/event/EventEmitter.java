@@ -3,8 +3,9 @@ package com.dimka.tictactoe.event;
 import com.dimka.tictactoe.domain.Game;
 import com.dimka.tictactoe.domain.Lobby;
 import com.dimka.tictactoe.domain.LobbyMember;
+import com.dimka.tictactoe.domain.User;
 import com.dimka.tictactoe.dto.*;
-import com.dimka.tictactoe.repository.WebSocketSessionStorage;
+import com.dimka.tictactoe.repository.UserStorage;
 import com.dimka.tictactoe.state.UserState;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -26,28 +28,23 @@ import java.util.stream.Collectors;
 @Component
 public class EventEmitter {
 
-    private final WebSocketSessionStorage sessionStorage;
+    private final UserStorage userStorage;
     private final ObjectMapper mapper;
 
     public void emmitLobbyMemberListChangedEvent(String lobbyId) throws Exception {
         LobbyMembersResponse membersResponse = new LobbyMembersResponse();
-        List<LobbyMember> members = sessionStorage.getLobbyMembers(lobbyId)
-                .keySet()
-                .stream()
-                .map(key -> new LobbyMember(key, key))
-                .collect(Collectors.toList());
-        membersResponse.setMembers(members);
+        Set<User> members = userStorage.getLobbyMembers(lobbyId);
+        Set<LobbyMember> lobbyMembers = members.stream()
+                .map(user -> new LobbyMember(user.getId(), user.getId(), user.getId().equals(user.getLobby().getHost())))
+                .collect(Collectors.toSet());
+        membersResponse.setMembers(lobbyMembers);
         membersResponse.setType(Event.LOBBY_MEMBERS_LIST_CHANGED);
         TextMessage message = new TextMessage(mapper.writeValueAsBytes(membersResponse));
-        sessionStorage.getLobbyMembers(lobbyId)
-                .values()
-                .stream()
-                .map(user -> (WebSocketSession) user.get("session"))
-                .forEach(s -> sendMessage(message, s));
+        members.forEach(user -> sendMessage(message, user.getSession()));
     }
 
     public void emmitLobbyLeaveEvent(WebSocketSession session) throws Exception {
-        LeaveLobbyResponse response = new LeaveLobbyResponse();
+        MessageResponse response = new MessageResponse();
         response.setType(Event.LEAVE_LOBBY);
         session.sendMessage(new TextMessage(mapper.writeValueAsBytes(response)));
     }
@@ -55,55 +52,40 @@ public class EventEmitter {
     public void emmitLobbyDestroyedEvent(String lobbyId) throws JsonProcessingException {
         MessageResponse response = new MessageResponse();
         response.setType(Event.LOBBY_DESTROYED);
-        List<String> ids = sessionStorage.getSessions().entrySet()
-                .stream()
-                .filter(entry -> UserState.IN_LOBBY.equals(entry.getValue().get("state")))
-                .filter(entry -> ((Lobby) entry.getValue().get("lobby")).getId().equals(lobbyId))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        Set<User> members = userStorage.getLobbyMembers(lobbyId);
+        members.forEach(user -> user.setLobby(null));
         TextMessage message = new TextMessage(mapper.writeValueAsBytes(response));
-        ids.stream()
-                .peek(id -> sessionStorage.getSessions().get(id).remove("lobby"))
-        .peek(id -> sessionStorage.getSessions().get(id).put("state", UserState.SEARCH_LOBBY))
-        .map(id -> (WebSocketSession) sessionStorage.getSessions().get(id).get("session"))
-        .forEach(session -> sendMessage(message, session));
+        members.forEach(user -> sendMessage(message, user.getSession()));
     }
 
     public void emmitLobbyListChanged(WebSocketSession session) throws Exception {
         LobbyListResponse lobbyListResponse = new LobbyListResponse();
         lobbyListResponse.setType(Event.LOBBY_LIST_CHANGED);
-        lobbyListResponse.setLobbies(sessionStorage.getLobbyList());
+        lobbyListResponse.setLobbies(userStorage.getLobbyList());
         TextMessage message = new TextMessage(mapper.writeValueAsBytes(lobbyListResponse));
-        sessionStorage.getSessions()
-                .values()
+        userStorage.getAllUsers()
                 .stream()
-                .filter(user -> ((WebSocketSession)user.get("session")).isOpen())
-                .filter(user -> !session.getId().equals(((WebSocketSession)user.get("session")).getId()))
-                .map(user -> (WebSocketSession)user.get("session"))
-                .forEach(s -> sendMessage(message, s));
+                .filter(user -> user.getSession().isOpen())
+                .filter(user -> !user.getId().equals(session.getId()))
+                .filter(user -> user.getGame() == null && user.getLobby() == null)
+                .forEach(user -> sendMessage(message, user.getSession()));
+        log.info("LOBBY_LIST_CHANGED");
     }
 
     public void emmitKikEvent(String userId) throws Exception {
-        KickResponse response = new KickResponse();
+        MessageResponse response = new MessageResponse();
         response.setType(Event.KICK);
-        ((WebSocketSession) sessionStorage.getSessions().get(userId).get("session")).sendMessage(new TextMessage(mapper.writeValueAsBytes(response)));
+        sendMessage(new TextMessage(mapper.writeValueAsBytes(response)), userStorage.getUser(userId).getSession());
     }
 
     public void emmitGameStartedEvent(String lobbyId, Game game) throws Exception {
         MessageResponse response = new MessageResponse();
         response.setType(Event.GAME_STARTED);
         TextMessage message = new TextMessage(mapper.writeValueAsBytes(response));
-        sessionStorage.getSessions()
-                .values()
-                .stream()
-                .filter(user -> user.containsKey("lobby"))
-                .filter(user -> ((Lobby) user.get("lobby")).getId().equals(lobbyId))
-                .peek(user -> user.remove("lobby"))
-                .peek(user -> user.put("state", UserState.IN_GAME))
-                .peek(user -> user.put("game", game))
-                .map(user -> (WebSocketSession) user.get("session"))
-                .forEach(session -> sendMessage(message, session));
-
+        Set<User> members = userStorage.getLobbyMembers(lobbyId);
+        members.forEach(user -> user.setLobby(null));
+        members.forEach(user -> user.setGame(game));
+        members.forEach(user -> sendMessage(message, user.getSession()));
     }
 
     public void emmitBoardStateChangedEvent(int[][] cells, WebSocketSession session) throws Exception {
@@ -111,15 +93,14 @@ public class EventEmitter {
         response.setCells(cells);
         response.setType(Event.BOARD_CHANGED);
         TextMessage message = new TextMessage(mapper.writeValueAsBytes(response));
-        Game game = (Game) sessionStorage.getSessions().get(session.getId()).get("game");
-        sessionStorage.getSessions()
-                .entrySet()
+        User user = userStorage.getUser(session.getId());
+        Game game = user.getGame();
+        userStorage.getAllUsers()
                 .stream()
-                .filter(entry -> !session.getId().equals(entry.getKey()))
-                .filter(entry -> entry.getValue().containsKey("game"))
-                .filter(entry -> game.getId().equals(((Game) entry.getValue().get("game")).getId()))
-                .map(entry -> (WebSocketSession) entry.getValue().get("session"))
-                .forEach(s -> sendMessage(message, s));
+                .filter(usr -> !usr.getId().equals(user.getId()))
+                .filter(usr -> usr.getGame() != null)
+                .filter(usr -> usr.getGame().getId().equals(game.getId()))
+                .forEach(usr -> sendMessage(message, usr.getSession()));
     }
 
     public void emmitEnemyTurnEvent(WebSocketSession session) throws Exception {
@@ -132,30 +113,29 @@ public class EventEmitter {
         sendMessage(message, session);
     }
 
-    public WebSocketSession getEnemy(String gameId, String userId) {
-        return sessionStorage.getSessions()
-                .entrySet()
+    public User getLobbyEnemy(String lobbyId, String userId) {
+        return userStorage.getAllUsers()
                 .stream()
-                .filter(entry -> !entry.getKey().equals(userId))
-                .map(Map.Entry::getValue)
-                .filter(user -> user.containsKey("game"))
-                .filter(user -> gameId.equals(((Game) user.get("game")).getId()))
-                .map(user -> (WebSocketSession) user.get("session"))
+                .filter(user -> !user.getId().equals(userId))
+                .filter(user -> user.getLobby() != null)
+                .filter(user -> user.getLobby().getId().equals(lobbyId))
                 .findFirst()
                 .orElseThrow();
     }
 
-    public WebSocketSession getLobbyEnemy(String lobbyId, String userId) {
-        return sessionStorage.getSessions()
-                .entrySet()
-                .stream()
-                .filter(entry -> !entry.getKey().equals(userId))
-                .map(Map.Entry::getValue)
-                .filter(user -> user.containsKey("lobby"))
-                .filter(user -> lobbyId.equals(((Lobby) user.get("lobby")).getId()))
-                .map(user -> (WebSocketSession) user.get("session"))
-                .findFirst()
-                .orElseThrow();
+    public void emmitLobbyCreatedEvent(WebSocketSession session) throws Exception {
+        CreateLobbyResponse response = new CreateLobbyResponse();
+        response.setType(Event.LOBBY_CREATED);
+        response.setHost(session.getId());
+        response.setId(session.getId());
+        sendMessage(new TextMessage(mapper.writeValueAsBytes(response)), session);
+    }
+
+    public void emmitJoinedToLobbyEvent(String lobbyId, WebSocketSession session) throws Exception {
+        JoinLobbyResponse response = new JoinLobbyResponse();
+        response.setLobbyId(lobbyId);
+        response.setType(Event.JOINED_TO_LOBBY);
+        sendMessage(new TextMessage(mapper.writeValueAsBytes(response)), session);
     }
 
     public void emmitGamesChangedEvent(int currentGame, int totalGames, WebSocketSession... sessions) throws Exception {

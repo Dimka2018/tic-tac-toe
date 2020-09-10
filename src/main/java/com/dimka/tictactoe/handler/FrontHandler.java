@@ -24,7 +24,7 @@ public class FrontHandler extends BinaryWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("new Connection");
-        handlers.get("login").dispatch(session);
+        handlers.get("login").dispatch(null, session);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class FrontHandler extends BinaryWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("connection closed");
-        handlers.get("logout").dispatch(session);
+        handlers.get("logout").dispatch(null, session);
     }
 }

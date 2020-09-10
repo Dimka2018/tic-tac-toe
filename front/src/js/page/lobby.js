@@ -15,21 +15,26 @@ class Lobby extends React.Component {
     }
 
     componentDidMount() {
-        this.controller.subscribe('LOBBY_MEMBERS_LIST_CHANGED', message => {
+        this.controller.subscribe('lobby', 'LOBBY_MEMBERS_LIST_CHANGED', message => {
             this.setMembers(message.members)
         });
-        this.controller.subscribe('LEAVE_LOBBY', message => {
+        this.controller.subscribe('lobby','LEAVE_LOBBY', message => {
             this.controller.goLobbySearch();
         });
-        this.controller.subscribe('LOBBY_DESTROYED', message => {
+        this.controller.subscribe('lobby','LOBBY_DESTROYED', message => {
             this.controller.goLobbySearch();
         });
-        this.controller.subscribe('KICK', message => {
+        this.controller.subscribe('lobby','KICK', message => {
             this.controller.goLobbySearch();
         });
-        this.controller.subscribe('GAME_STARTED', message => {
+        this.controller.subscribe('lobby','GAME_STARTED', message => {
             this.controller.goGame();
         });
+    }
+
+    componentWillUnmount() {
+        console.log('unmount');
+        this.controller.unsubscribeAll();
     }
 
     setMembers(members) {
@@ -44,7 +49,7 @@ class Lobby extends React.Component {
         const users = this.state.users.map((user, index) => <div className="user" key={index}>
             <span>{index + 1}</span>
             <span className="user-name">{user.name}</span>
-            {(this.state.host === 'false') || (index === 0) ? <span/> : <span className="kik-button" onClick={() => this.controller.kik(user.id)}>KIK</span>}
+            {(this.state.host === 'true') && !user.host ? <span className="kik-button" onClick={() => this.controller.kik(user.id)}>KIK</span> : <span/>}
         </div>);
         return (
             <div className="background">

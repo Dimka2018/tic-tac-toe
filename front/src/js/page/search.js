@@ -18,15 +18,15 @@ class Search extends React.Component {
     }
 
     componentDidMount() {
-        this.controller.subscribe('LOBBY_LIST_CHANGED', message => {
+        this.controller.subscribe('search', 'LOBBY_LIST_CHANGED', message => {
             this.refs.searchTable.setLobbies(message.lobbies);
         });
 
-        this.controller.subscribe('LOBBY_CREATED', message => {
+        this.controller.subscribe('search', 'LOBBY_CREATED', message => {
             this.controller.goLobby(true, message.id);
         });
 
-        this.controller.subscribe('JOINED_TO_LOBBY', message => {
+        this.controller.subscribe('search', 'JOINED_TO_LOBBY', message => {
             this.controller.goLobby(false, message.lobbyId);
         });
 

@@ -7,5 +7,4 @@ public interface Handler {
 
     default void dispatch(TextMessage message, WebSocketSession session) throws Exception {};
 
-    default void dispatch(WebSocketSession session) throws Exception {};
 }

@@ -11,4 +11,5 @@ public class LobbyMember {
 
     private String id;
     private String name;
+    private boolean isHost;
 }
