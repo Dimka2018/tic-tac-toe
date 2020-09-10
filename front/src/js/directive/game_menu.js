@@ -29,6 +29,10 @@ class GameMenu extends React.Component {
         this.setState({currentGame: games.currentGame, totalGames: games.totalGames})
     }
 
+    onLeaveClick() {
+        this.props.onLeave();
+    }
+
     render() {
         return (
             <div className="game_menu">
@@ -38,7 +42,7 @@ class GameMenu extends React.Component {
                 </div>
                 <span className='game-turn'>{this.state.message}</span>
                 <div className="w-25 h-100 d-flex justify-content-end align-items-start">
-                    <button className="leave_button">Leave</button>
+                    <button className="leave_button" onClick={this.onLeaveClick.bind(this)}>Leave</button>
                 </div>
 
             </div>

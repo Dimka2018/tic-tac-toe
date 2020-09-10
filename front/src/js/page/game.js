@@ -37,16 +37,23 @@ class Game extends React.Component{
         this.controller.subscribe('DRAW', message => {
             this.controller.goLobbySearch();
         });
+        this.controller.subscribe('LEAVE_GAME', message => {
+            this.controller.goLobbySearch();
+        });
     }
 
     applyGameState(board) {
         this.controller.applyGameState(board);
     }
 
+    leaveGame() {
+        this.controller.leaveGame();
+    }
+
     render() {
         return (
             <div className="game">
-                <GameMenu ref="menu"/>
+                <GameMenu ref="menu" onLeave={this.leaveGame.bind(this)}/>
                 <Board ref="board" onBoardChanged={this.applyGameState.bind(this)}/>
             </div>
         )

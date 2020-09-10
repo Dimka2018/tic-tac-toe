@@ -194,6 +194,11 @@ public class EventEmitter {
         Arrays.stream(sessions).forEach(session -> sendMessage(message, session));
     }
 
+    public void emmitLeaveGameEvent(WebSocketSession... sessions) throws Exception {
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(new MessageResponse(Event.LEAVE_GAME)));
+        Arrays.stream(sessions).forEach(session -> sendMessage(message, session));
+    }
+
     private void sendMessage(AbstractWebSocketMessage message, WebSocketSession session) {
         try {
             session.sendMessage(message);

@@ -17,5 +17,6 @@ public enum Event {
     SCORE_CHANGED,
     YOU_WIN,
     YOU_LOSE,
-    DRAW
+    DRAW,
+    LEAVE_GAME
 }

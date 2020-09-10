@@ -66,7 +66,7 @@ class Controller {
     }
 
     leaveGame() {
-
+        this.socket.send(JSON.stringify({type: 'leaveGame'}))
     }
 
     applyGameState(board) {
