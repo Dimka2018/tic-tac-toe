@@ -1,0 +1,56 @@
+.username-background {
+    position: absolute;
+    background: black;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.username-background .username-container {
+    width: 40vw;
+    height: 20vw;
+    margin-top: 10vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.username-container .line {
+    width: 1vw;
+    height: 5vw;
+    background: white;
+}
+
+.username-container .title {
+    background: white;
+    color: black;
+    width: 20vw;
+    height: 3vw;
+    font-size: 1.5vw;
+    border-radius: 1vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.username-container input {
+    width: 20vw;
+    height: 3vw;
+    font-size: 1vw;
+    border-radius: 1vw;
+    outline: none;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.username-container button {
+    width: 20vw;
+    height: 3vw;
+    font-weight: bold;
+    font-size: 1.5vw;
+    border-radius: 1vw;
+    outline: none;
+    border: none;
+}

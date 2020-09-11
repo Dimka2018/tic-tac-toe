@@ -9,6 +9,7 @@ import Controller from "./js/controller/Controller";
 import {Route} from 'react-router-dom';
 import {Router} from "react-router-dom";
 import history from "./js/utils/history";
+import Username from "./js/page/username";
 
 let hist = history;
 const controller = new Controller(hist);
@@ -16,6 +17,9 @@ const routing = (
     <Router history={hist}>
         <div>
             <Route exact path="/" component={props =>
+                <Username controller={controller} />
+            }/>
+            <Route exact path="/search" component={props =>
                 <Search controller={controller} />
             }/>
             <Route path='/lobby' component={props =>

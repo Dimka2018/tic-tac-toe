@@ -77,12 +77,16 @@ class Controller {
         this.socket.send(JSON.stringify({type: 'applyBoardState', cells: board}))
     }
 
+    saveUsername(username) {
+        this.socket.send(JSON.stringify({type: 'setUsername', username: username}))
+    }
+
     goLobby(host = false, id) {
         history.push(`/lobby?host=${host}&id=${id}`);
     }
 
     goLobbySearch() {
-        history.push("/")
+        history.push("/search")
     }
 
     goGame() {

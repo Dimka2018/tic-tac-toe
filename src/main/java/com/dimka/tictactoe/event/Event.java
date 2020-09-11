@@ -18,5 +18,6 @@ public enum Event {
     YOU_WIN,
     YOU_LOSE,
     DRAW,
-    LEAVE_GAME
+    LEAVE_GAME,
+    USERNAME_CHANGED
 }

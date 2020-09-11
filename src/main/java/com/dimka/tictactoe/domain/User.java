@@ -7,6 +7,7 @@ import org.springframework.web.socket.WebSocketSession;
 public class User {
 
     private String id;
+    private String name;
     private Lobby lobby;
     private Game game;
     private WebSocketSession session;

@@ -33,7 +33,7 @@ public class RequestLobbyMembersHandler implements Handler {
         Set<User> lobbyMembers = userStorage.getLobbyMembers(lobby.getId());
         Set<LobbyMember> members = lobbyMembers
                 .stream()
-                .map(usr -> new LobbyMember(usr.getId(), usr.getId(), usr.getId().equals(lobby.getHost())))
+                .map(usr -> new LobbyMember(usr.getId(), usr.getName(), usr.getId().equals(lobby.getHost())))
                 .collect(Collectors.toSet());
         LobbyMembersResponse response = new LobbyMembersResponse();
         response.setMembers(members);

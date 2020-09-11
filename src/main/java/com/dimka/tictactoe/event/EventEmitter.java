@@ -35,7 +35,7 @@ public class EventEmitter {
         LobbyMembersResponse membersResponse = new LobbyMembersResponse();
         Set<User> members = userStorage.getLobbyMembers(lobbyId);
         Set<LobbyMember> lobbyMembers = members.stream()
-                .map(user -> new LobbyMember(user.getId(), user.getId(), user.getId().equals(user.getLobby().getHost())))
+                .map(user -> new LobbyMember(user.getId(), user.getName(), user.getId().equals(user.getLobby().getHost())))
                 .collect(Collectors.toSet());
         membersResponse.setMembers(lobbyMembers);
         membersResponse.setType(Event.LOBBY_MEMBERS_LIST_CHANGED);
@@ -69,7 +69,6 @@ public class EventEmitter {
                 .filter(user -> !user.getId().equals(session.getId()))
                 .filter(user -> user.getGame() == null && user.getLobby() == null)
                 .forEach(user -> sendMessage(message, user.getSession()));
-        log.info("LOBBY_LIST_CHANGED");
     }
 
     public void emmitKikEvent(String userId) throws Exception {
@@ -177,6 +176,11 @@ public class EventEmitter {
     public void emmitLeaveGameEvent(WebSocketSession... sessions) throws Exception {
         TextMessage message = new TextMessage(mapper.writeValueAsBytes(new MessageResponse(Event.LEAVE_GAME)));
         Arrays.stream(sessions).forEach(session -> sendMessage(message, session));
+    }
+
+    public void emmitUsernameChangedEvent(WebSocketSession session) throws Exception {
+        TextMessage message = new TextMessage(mapper.writeValueAsBytes(new MessageResponse(Event.USERNAME_CHANGED)));
+        sendMessage(message, session);
     }
 
     private void sendMessage(AbstractWebSocketMessage message, WebSocketSession session) {

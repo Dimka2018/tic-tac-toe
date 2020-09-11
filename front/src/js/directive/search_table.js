@@ -21,7 +21,7 @@ class SearchTable extends React.Component {
             <tr key={lobby.id} onClick={() => this.onRowClick(lobby.id)}>
                 <td>{index + 1}</td>
                 <td>{lobby.id}</td>
-                <td>{lobby.host}</td>
+                <td>{lobby.hostName}</td>
                 <td>{lobby.games}</td>
             </tr>);
         return (

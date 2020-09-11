@@ -6,6 +6,7 @@ import lombok.Data;
 public class Lobby {
 
     private String id;
+    private String hostName;
     private String host;
     private int games;
 }

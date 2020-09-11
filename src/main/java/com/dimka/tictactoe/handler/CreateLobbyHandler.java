@@ -32,6 +32,7 @@ public class CreateLobbyHandler implements Handler {
         lobby.setId(session.getId());
         lobby.setGames(request.getGames());
         User user = userStorage.getUser(session.getId());
+        lobby.setHostName(user.getName());
         user.setLobby(lobby);
 
         emitter.emmitLobbyCreatedEvent(session);
