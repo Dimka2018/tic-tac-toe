@@ -2,12 +2,24 @@ import React from "react";
 import Board from "../directive/board";
 import GameMenu from "../directive/game_menu";
 import '../../css/game.css';
+import MessageWindow from "../directive/message_window";
 
 class Game extends React.Component{
 
     constructor(props) {
         super(props);
         this.controller = props.controller;
+        this.state = {
+            modalMode: false
+        }
+    }
+
+    clearMessage() {
+        this.setState({message: ''})
+    }
+
+    setMessage(message) {
+        this.setState({message: message})
     }
 
     componentDidMount() {
@@ -29,17 +41,22 @@ class Game extends React.Component{
             this.refs.menu.setScore(message);
         });
         this.controller.subscribe('game', 'YOU_WIN', message => {
-            this.controller.goLobbySearch();
+            this.openModal('You win');
         });
         this.controller.subscribe('game', 'YOU_LOSE', message => {
-            this.controller.goLobbySearch();
+            this.openModal('You lose');
         });
         this.controller.subscribe('game', 'DRAW', message => {
-            this.controller.goLobbySearch();
+            this.openModal('Draw');
         });
         this.controller.subscribe('game', 'LEAVE_GAME', message => {
             this.controller.goLobbySearch();
         });
+    }
+
+    openModal(message) {
+        this.setState({modalMode: true});
+        this.refs.modal.setMessage(message);
     }
 
     applyGameState(board) {
@@ -55,6 +72,7 @@ class Game extends React.Component{
             <div className="game">
                 <GameMenu ref="menu" onLeave={this.leaveGame.bind(this)}/>
                 <Board ref="board" onBoardChanged={this.applyGameState.bind(this)}/>
+                {this.state.modalMode && <MessageWindow ref='modal' onOk={() => this.controller.goLobbySearch()}/>}
             </div>
         )
     }

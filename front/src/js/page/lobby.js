@@ -1,5 +1,6 @@
 import React from "react";
 import '../../css/lobby.css';
+import MessageWindow from "../directive/message_window";
 
 class Lobby extends React.Component {
 
@@ -10,7 +11,8 @@ class Lobby extends React.Component {
         this.state = {
             host: params.get('host'),
             id: params.get('id'),
-            users: []
+            users: [],
+            modalMode: false
         }
     }
 
@@ -18,22 +20,27 @@ class Lobby extends React.Component {
         this.controller.subscribe('lobby', 'LOBBY_MEMBERS_LIST_CHANGED', message => {
             this.setMembers(message.members)
         });
-        this.controller.subscribe('lobby','LEAVE_LOBBY', message => {
+        this.controller.subscribe('lobby', 'LEAVE_LOBBY', message => {
             this.controller.goLobbySearch();
         });
-        this.controller.subscribe('lobby','LOBBY_DESTROYED', message => {
-            this.controller.goLobbySearch();
+        this.controller.subscribe('lobby', 'LOBBY_DESTROYED', message => {
+            this.openModal('Lobby destroyed');
         });
-        this.controller.subscribe('lobby','KICK', message => {
-            this.controller.goLobbySearch();
+        this.controller.subscribe('lobby', 'KICK', message => {
+            this.openModal('You\'ve been kicked');
         });
-        this.controller.subscribe('lobby','GAME_STARTED', message => {
+        this.controller.subscribe('lobby', 'GAME_STARTED', message => {
             this.controller.goGame();
         });
     }
 
+    openModal(message) {
+        this.setState({modalMode: true});
+        this.refs.modal.setMessage(message);
+    }
+
+
     componentWillUnmount() {
-        console.log('unmount');
         this.controller.unsubscribeAll();
     }
 
@@ -62,6 +69,7 @@ class Lobby extends React.Component {
                     {this.state.host === 'true' && <button className="lobby-button" onClick={() => this.controller.startGame(this.state.id)} >START</button>}
                     <button className="lobby-button" onClick={this.leaveLobby.bind(this)}>LEAVE</button>
                 </div>
+                {this.state.modalMode && <MessageWindow onOk={() => this.controller.goLobbySearch()} ref='modal' />}
             </div>
         );
     }
