@@ -12,6 +12,7 @@ class Controller {
         this.socket = new WebSocket("ws://localhost:8080");
         this.socket.onopen = () => {
             this.connectedCallbacks.forEach(callback => callback());
+            this.goUsername();
         };
 
         this.socket.onclose = () => {
@@ -86,11 +87,15 @@ class Controller {
     }
 
     goLobbySearch() {
-        history.push("/search")
+        history.push('/search')
     }
 
     goGame() {
-        history.push("/game");
+        history.push('/game');
+    }
+
+    goUsername() {
+        history.push('/')
     }
 }
 
