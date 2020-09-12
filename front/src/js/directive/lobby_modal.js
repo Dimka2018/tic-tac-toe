@@ -25,7 +25,7 @@ class LobbyModal extends React.Component {
                         <span className="lobby-title font-weight-bold">Enter number of games</span>
                     </div>
                     <div className="row flex mt-5vw justify-content-center align-items-center">
-                        <input className="game-input" onInput={this.handleInput.bind(this)} />
+                        <input className="game-input" type="number" onInput={this.handleInput.bind(this)} />
                     </div>
 
                     <div className="row flex mt-7vw justify-content-around align-items-center">
